@@ -1,0 +1,4 @@
+.env
+notes.txt
+password_generator.py
+password_encryption.py
