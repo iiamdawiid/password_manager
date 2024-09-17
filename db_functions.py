@@ -16,12 +16,11 @@ db = client[db_name]
 password_collection = db[collection_name]
 
 
-def display_passwords(delete_password=False):
+def display_passwords(display_header=True):
     # print only if this function is not called from delete_password
-    if not delete_password:
+    if display_header:
         print(
-            "\n"
-            + f"{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(30, '=')}{Style.RESET_ALL}"
+            f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(30, '=')}{Style.RESET_ALL}"
         )
 
     # require MASTER PASSWORD for login to ensure security
@@ -33,11 +32,10 @@ def display_passwords(delete_password=False):
         user_records = list(user)
 
         if user_records:
-            print(f"LOGIN: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
-            print(
-                "\n"
-                + f'{Fore.GREEN}{"SAVED PASSWORDS".center(30, "=")}{Style.RESET_ALL}'
-            )
+            print(f"LOGIN: {Fore.GREEN}SUCCESS{Style.RESET_ALL}\n")
+            # print(
+            #     f"\n{Fore.GREEN}{'SAVED PASSWORDS'.center(30, '=')}{Style.RESET_ALL}"
+            # )
             for record in user_records:
                 # TODO: IMPLEMENT TABULATE LIBRARY TO IMPROVE OUTPUT
                 master_password = record["master_password"]
@@ -52,7 +50,7 @@ def display_passwords(delete_password=False):
 
 
 def store_password():
-    print("\n" + "STORE PASSWORD".center(30, "="))
+    print(f"\n{Fore.GREEN}{'STORE PASSWORD'.center(30, '=')}{Style.RESET_ALL}")
     master_password = input("Enter master password (REMEMBER IT): ")
     encrypted_master_password = encrypt_password(master_password)
     website_name = input("Enter website name (Ex. facebook): ")
@@ -95,8 +93,8 @@ def store_password():
 
 
 def delete_password():
-    print("\n" + f"{Fore.RED}{'DELETE PASSWORD'.center(30, '=')}{Style.RESET_ALL}")
-    display_passwords(True)
+    print(f"\n{Fore.RED}{'DELETE PASSWORD'.center(30, '=')}{Style.RESET_ALL}")
+    display_passwords(False)
 
     while True:
         try:
@@ -116,5 +114,84 @@ def delete_password():
             print(f"{Fore.RED}Error:{Style.RESET_ALL} {e}")
 
 
-def update_password(): ...
-# TODO
+def update_entry():
+    print(f"\n{Fore.CYAN}{'UPDATE ENTRY'.center(30, '=')}{Style.RESET_ALL}")
+    # call display_passwords() and display stored passwords, if any
+    display_passwords(False)
+    # ask user to select an entry by website_name
+    while True:
+        try:
+            website_name = input("Choose entry by website name: ")
+            user_selection = password_collection.find_one(
+                {"website_name": website_name}
+            )
+            if user_selection:  # website exists in db
+                break
+            else:
+                print(
+                    f"{Fore.RED}Website '{website_name}' was not found: Please double-check and try again.{Style.RESET_ALL}"
+                )
+
+        except Exception as e:
+            print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+
+    while True:
+        try:
+            update_choice = int(
+                input("1: Update website\n2: Update password\nEnter choice: ")
+            )
+            if update_choice not in {1, 2}:
+                print(f"{Fore.RED}ERROR: Please enter 1 or 2 {Style.RESET_ALL}")
+            else:
+                break
+
+        except ValueError:
+            print(f"{Fore.RED}ERROR: Please enter a number{Style.RESET_ALL}")
+
+    if update_choice == 1:
+        new_website_name = input("Enter new website name: ")
+        while True:
+            try:
+                confirm_website_name = input("Confirm website name: ")
+                if new_website_name == confirm_website_name:
+                    password_collection.update_one({"website_name": website_name}, {"$set": {"website_name": new_website_name}})
+                    print(f"UPDATE: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
+                    break
+                else:
+                    print(f"{Fore.RED}ERROR: Website name's do not match. Please try again{Style.RESET_ALL}")
+
+            except Exception as e:
+                print(f"{Fore.RED}ERROR: {e}{Style.RESET_ALL}")
+
+    else:
+        while True:
+            try:
+                password_choice = int(input("1: Enter Personal Password\n2: Generate Secure Password\nEnter choice: "))
+                if password_choice not in {1, 2}:
+                    print(f"{Fore.RED}ERROR: Please enter 1 or 2{Style.RESET_ALL}")
+                else:
+                    break
+
+            except ValueError:
+                print(f"{Fore.RED}ERROR: Please enter a number{Style.RESET_ALL}")
+
+        if password_choice == 1:
+            new_password = input("Enter new password: ")
+            while True:
+                try:
+                    confirm_new_password = input("Confirm new password: ")
+                    if new_password == confirm_new_password:
+                        password_collection.update_one({"website_name": website_name}, {"$set": {"password": encrypt_password(new_password)}})
+                        print(f"UPDATE: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
+                        break
+                    else:
+                        print(f"{Fore.RED}ERROR: Passwords do not match. Please try again{Style.RESET_ALL}")
+
+                except Exception as e:
+                    print(f"{Fore.RED}ERROR: {e}{Style.RESET_ALL}")
+
+        else:
+            new_password = generate_password()
+            password_collection.update_one({"website_name": website_name}, {"$set": {"password": new_password}})
+            print(f"UPDATE: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
+            
