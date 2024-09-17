@@ -17,40 +17,6 @@ db = client[db_name]
 password_collection = db[collection_name]
 
 
-# def display_passwords(display_header=True):
-#     # print only if this function is not called from delete_password
-#     if display_header:
-#         print(
-#             f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(40, '=')}{Style.RESET_ALL}"
-#         )
-
-#     # require MASTER PASSWORD for login to ensure security
-#     while True:
-#         master_password = input("Enter master password: ")
-#         encrypted_maspas = encrypt_password(master_password)
-#         user = password_collection.find({"master_password": encrypted_maspas})
-
-#         user_records = list(user)
-#         print(user_records)
-
-#         if user_records:
-#             print(f"LOGIN: {Fore.GREEN}SUCCESS{Style.RESET_ALL}\n")
-#             # print(
-#             #     f"\n{Fore.GREEN}{'SAVED PASSWORDS'.center(40, '=')}{Style.RESET_ALL}"
-#             # )
-#             for record in user_records:
-#                 # TODO: IMPLEMENT TABULATE LIBRARY TO IMPROVE OUTPUT
-#                 master_password = record["master_password"]
-#                 website = record["website_name"]
-#                 password = decrypt_password(record["password"])
-#                 print(f"{website}: {Fore.YELLOW}{password}{Style.RESET_ALL}\n")
-#             break
-
-#         else:
-#             print(f"LOGIN: {Fore.RED}FAILED{Style.RESET_ALL}")
-#             print(f"{Fore.RED}No passwords stored for user{Style.RESET_ALL}")
-
-
 def display_passwords(display_header=True):
     if display_header:
         print(f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(40, '=')}{Style.RESET_ALL}")

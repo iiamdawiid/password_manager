@@ -1,4 +1,5 @@
 .env
+test.py
 notes.txt
 password_generator.py
 password_encryption.py
