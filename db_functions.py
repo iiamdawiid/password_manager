@@ -51,12 +51,9 @@ password_collection = db[collection_name]
 #             print(f"{Fore.RED}No passwords stored for user{Style.RESET_ALL}")
 
 
-
 def display_passwords(display_header=True):
     if display_header:
-        print(
-            f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(40, '=')}{Style.RESET_ALL}"
-        )
+        print(f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(40, '=')}{Style.RESET_ALL}")
 
     while True:
         master_password = input("Enter master password: ")
@@ -139,17 +136,23 @@ def delete_password():
             if delete_choice:
                 while True:
                     try:
-                        confirm_delete = input(f"Enter 'DELETE {website_name}' to delete or 'Q' to quit: ")
+                        confirm_delete = input(
+                            f"Enter 'DELETE {website_name}' to delete or 'Q' to quit: "
+                        )
                         delete_phrase = f"DELETE {website_name}"
                         if confirm_delete == delete_phrase:
-                            password_collection.delete_one({"website_name": website_name})
+                            password_collection.delete_one(
+                                {"website_name": website_name}
+                            )
                             print(f"DELETE: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
                             break
                         elif confirm_delete == "Q":
                             print(f"{Fore.RED}PROGRAM QUIT{Style.RESET_ALL}")
                             break
                         else:
-                            print(f"{Fore.RED}SPELLING ERROR: Please try again{Style.RESET_ALL}")
+                            print(
+                                f"{Fore.RED}SPELLING ERROR: Please try again{Style.RESET_ALL}"
+                            )
 
                     except Exception as e:
                         print(f"{Fore.RED}ERROR: {e}{Style.RESET_ALL}")
@@ -184,7 +187,6 @@ def update_entry():
         except Exception as e:
             print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
 
-
     print("".center(40, "="))
     while True:
         try:
@@ -206,11 +208,16 @@ def update_entry():
             try:
                 confirm_website_name = input("Confirm website name: ")
                 if new_website_name == confirm_website_name:
-                    password_collection.update_one({"website_name": website_name}, {"$set": {"website_name": new_website_name}})
+                    password_collection.update_one(
+                        {"website_name": website_name},
+                        {"$set": {"website_name": new_website_name}},
+                    )
                     print(f"UPDATE: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
                     break
                 else:
-                    print(f"{Fore.RED}ERROR: Website name's do not match. Please try again{Style.RESET_ALL}")
+                    print(
+                        f"{Fore.RED}ERROR: Website name's do not match. Please try again{Style.RESET_ALL}"
+                    )
 
             except Exception as e:
                 print(f"{Fore.RED}ERROR: {e}{Style.RESET_ALL}")
@@ -218,7 +225,11 @@ def update_entry():
     else:
         while True:
             try:
-                password_choice = int(input("1: Enter Personal Password\n2: Generate Secure Password\nEnter choice: "))
+                password_choice = int(
+                    input(
+                        "1: Enter Personal Password\n2: Generate Secure Password\nEnter choice: "
+                    )
+                )
                 if password_choice not in {1, 2}:
                     print(f"{Fore.RED}ERROR: Please enter 1 or 2{Style.RESET_ALL}")
                 else:
@@ -234,17 +245,23 @@ def update_entry():
                 try:
                     confirm_new_password = input("Confirm new password: ")
                     if new_password == confirm_new_password:
-                        password_collection.update_one({"website_name": website_name}, {"$set": {"password": encrypt_password(new_password)}})
+                        password_collection.update_one(
+                            {"website_name": website_name},
+                            {"$set": {"password": encrypt_password(new_password)}},
+                        )
                         print(f"UPDATE: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
                         break
                     else:
-                        print(f"{Fore.RED}ERROR: Passwords do not match. Please try again{Style.RESET_ALL}")
+                        print(
+                            f"{Fore.RED}ERROR: Passwords do not match. Please try again{Style.RESET_ALL}"
+                        )
 
                 except Exception as e:
                     print(f"{Fore.RED}ERROR: {e}{Style.RESET_ALL}")
 
         else:
             new_password = generate_password()
-            password_collection.update_one({"website_name": website_name}, {"$set": {"password": new_password}})
+            password_collection.update_one(
+                {"website_name": website_name}, {"$set": {"password": new_password}}
+            )
             print(f"UPDATE: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
-            
