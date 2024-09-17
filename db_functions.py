@@ -135,16 +135,30 @@ def delete_password():
         try:
             website_name = input("Site associated with password: ")
             delete_choice = password_collection.find_one({"website_name": website_name})
+
             if delete_choice:
-                password_collection.delete_one({"website_name": website_name})
-                print(f"DELETE: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
+                while True:
+                    try:
+                        confirm_delete = input(f"Enter 'DELETE {website_name}' to delete or 'Q' to quit: ")
+                        delete_phrase = f"DELETE {website_name}"
+                        if confirm_delete == delete_phrase:
+                            password_collection.delete_one({"website_name": website_name})
+                            print(f"DELETE: {Fore.GREEN}SUCCESS{Style.RESET_ALL}")
+                            break
+                        elif confirm_delete == "Q":
+                            print(f"{Fore.RED}PROGRAM QUIT{Style.RESET_ALL}")
+                            break
+                        else:
+                            print(f"{Fore.RED}SPELLING ERROR: Please try again{Style.RESET_ALL}")
+
+                    except Exception as e:
+                        print(f"{Fore.RED}ERROR: {e}{Style.RESET_ALL}")
                 break
             else:
                 print(f"DELETE: {Fore.RED}FAILED{Style.RESET_ALL}")
                 print(
                     f"Website '{website_name}' not found: Please double-check and try again."
                 )
-
         except Exception as e:
             print(f"{Fore.RED}Error:{Style.RESET_ALL} {e}")
 
