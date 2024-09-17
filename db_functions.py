@@ -1,5 +1,6 @@
 import os
 import pymongo
+from tabulate import tabulate
 from dotenv import load_dotenv
 from colorama import Fore, Style
 from password_generator import generate_password
@@ -16,49 +17,83 @@ db = client[db_name]
 password_collection = db[collection_name]
 
 
+# def display_passwords(display_header=True):
+#     # print only if this function is not called from delete_password
+#     if display_header:
+#         print(
+#             f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(40, '=')}{Style.RESET_ALL}"
+#         )
+
+#     # require MASTER PASSWORD for login to ensure security
+#     while True:
+#         master_password = input("Enter master password: ")
+#         encrypted_maspas = encrypt_password(master_password)
+#         user = password_collection.find({"master_password": encrypted_maspas})
+
+#         user_records = list(user)
+#         print(user_records)
+
+#         if user_records:
+#             print(f"LOGIN: {Fore.GREEN}SUCCESS{Style.RESET_ALL}\n")
+#             # print(
+#             #     f"\n{Fore.GREEN}{'SAVED PASSWORDS'.center(40, '=')}{Style.RESET_ALL}"
+#             # )
+#             for record in user_records:
+#                 # TODO: IMPLEMENT TABULATE LIBRARY TO IMPROVE OUTPUT
+#                 master_password = record["master_password"]
+#                 website = record["website_name"]
+#                 password = decrypt_password(record["password"])
+#                 print(f"{website}: {Fore.YELLOW}{password}{Style.RESET_ALL}\n")
+#             break
+
+#         else:
+#             print(f"LOGIN: {Fore.RED}FAILED{Style.RESET_ALL}")
+#             print(f"{Fore.RED}No passwords stored for user{Style.RESET_ALL}")
+
+
+
 def display_passwords(display_header=True):
-    # print only if this function is not called from delete_password
     if display_header:
         print(
-            f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(30, '=')}{Style.RESET_ALL}"
+            f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(40, '=')}{Style.RESET_ALL}"
         )
 
-    # require MASTER PASSWORD for login to ensure security
     while True:
         master_password = input("Enter master password: ")
         encrypted_maspas = encrypt_password(master_password)
         user = password_collection.find({"master_password": encrypted_maspas})
 
         user_records = list(user)
+        table = []
 
         if user_records:
             print(f"LOGIN: {Fore.GREEN}SUCCESS{Style.RESET_ALL}\n")
-            # print(
-            #     f"\n{Fore.GREEN}{'SAVED PASSWORDS'.center(30, '=')}{Style.RESET_ALL}"
-            # )
             for record in user_records:
-                # TODO: IMPLEMENT TABULATE LIBRARY TO IMPROVE OUTPUT
-                master_password = record["master_password"]
                 website = record["website_name"]
-                password = decrypt_password(record["password"])
-                print(f"{website}: {Fore.YELLOW}{password}{Style.RESET_ALL}\n")
+                password = f"{Fore.YELLOW}{decrypt_password(record['password'])}{Style.RESET_ALL}"
+                table.append([website, password])
             break
 
         else:
             print(f"LOGIN: {Fore.RED}FAILED{Style.RESET_ALL}")
             print(f"{Fore.RED}No passwords stored for user{Style.RESET_ALL}")
 
+    head1fmt = f"{Fore.GREEN}WEBSITE{Style.RESET_ALL}"
+    head2fmt = f"{Fore.GREEN}PASSWORD{Style.RESET_ALL}"
+
+    print(tabulate(table, headers=[head1fmt, head2fmt], tablefmt="github"))
+
 
 def store_password():
-    print(f"\n{Fore.GREEN}{'STORE PASSWORD'.center(30, '=')}{Style.RESET_ALL}")
+    print(f"\n{Fore.GREEN}{'STORE PASSWORD'.center(40, '=')}{Style.RESET_ALL}")
     master_password = input("Enter master password (REMEMBER IT): ")
     encrypted_master_password = encrypt_password(master_password)
     website_name = input("Enter website name (Ex. facebook): ")
-    print("".center(30, "="))
+    print("".center(40, "="))
     print(
         f"{Fore.YELLOW}1: Enter Personal Password{Style.RESET_ALL}\n{Fore.GREEN}2: Generate Secure Password{Style.RESET_ALL}"
     )
-    print("".center(30, "="))
+    print("".center(40, "="))
 
     while True:
         try:
@@ -93,7 +128,7 @@ def store_password():
 
 
 def delete_password():
-    print(f"\n{Fore.RED}{'DELETE PASSWORD'.center(30, '=')}{Style.RESET_ALL}")
+    print(f"\n{Fore.RED}{'DELETE PASSWORD'.center(40, '=')}{Style.RESET_ALL}")
     display_passwords(False)
 
     while True:
@@ -115,7 +150,7 @@ def delete_password():
 
 
 def update_entry():
-    print(f"\n{Fore.CYAN}{'UPDATE ENTRY'.center(30, '=')}{Style.RESET_ALL}")
+    print(f"\n{Fore.CYAN}{'UPDATE ENTRY'.center(40, '=')}{Style.RESET_ALL}")
     # call display_passwords() and display stored passwords, if any
     display_passwords(False)
     # ask user to select an entry by website_name
@@ -135,6 +170,8 @@ def update_entry():
         except Exception as e:
             print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
 
+
+    print("".center(40, "="))
     while True:
         try:
             update_choice = int(
@@ -148,6 +185,7 @@ def update_entry():
         except ValueError:
             print(f"{Fore.RED}ERROR: Please enter a number{Style.RESET_ALL}")
 
+    print("".center(40, "="))
     if update_choice == 1:
         new_website_name = input("Enter new website name: ")
         while True:
@@ -175,6 +213,7 @@ def update_entry():
             except ValueError:
                 print(f"{Fore.RED}ERROR: Please enter a number{Style.RESET_ALL}")
 
+        print("".center(40, "="))
         if password_choice == 1:
             new_password = input("Enter new password: ")
             while True:

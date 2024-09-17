@@ -12,11 +12,11 @@ def main():
 
 
 def start_menu():
-    print("\n" + "PASSWORD MANAGER".center(30, "="))
+    print("\n" + "PASSWORD MANAGER".center(40, "="))
     print(
         f"{Fore.YELLOW}1: Display Passwords{Style.RESET_ALL}\n{Fore.GREEN}2: Store Password{Style.RESET_ALL}\n{Fore.RED}3: Delete Password{Style.RESET_ALL}\n{Fore.CYAN}4: Update Entry{Style.RESET_ALL}"
     )
-    print("".center(30, "="))
+    print("".center(40, "="))
 
     while True:
         try:
