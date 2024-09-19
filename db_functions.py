@@ -19,7 +19,7 @@ password_collection = db[collection_name]
 
 def display_passwords(display_header=True):
     if display_header:
-        print(f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(40, '=')}{Style.RESET_ALL}")
+        print(f"\n{Fore.YELLOW}{'DISPLAY PASSWORDS'.center(30, '=')}{Style.RESET_ALL}")
 
     while True:
         master_password = input("Enter master password: ")
@@ -91,8 +91,9 @@ def store_password():
 
 
 def delete_password():
-    print(f"\n{Fore.RED}{'DELETE PASSWORD'.center(40, '=')}{Style.RESET_ALL}")
+    print(f"\n{Fore.RED}{'DELETE PASSWORD'.center(30, '=')}{Style.RESET_ALL}")
     display_passwords(False)
+    print("".center(40, "="))
 
     while True:
         try:
@@ -103,7 +104,7 @@ def delete_password():
                 while True:
                     try:
                         confirm_delete = input(
-                            f"Enter 'DELETE {website_name}' to delete or 'Q' to quit: "
+                            f"Enter {Fore.RED}'DELETE {website_name}'{Style.RESET_ALL} to {Fore.RED}delete{Style.RESET_ALL} or {Fore.GREEN}'Q'{Style.RESET_ALL} to {Fore.GREEN}quit{Style.RESET_ALL}: "
                         )
                         delete_phrase = f"DELETE {website_name}"
                         if confirm_delete == delete_phrase:
@@ -133,12 +134,13 @@ def delete_password():
 
 
 def update_entry():
-    print(f"\n{Fore.CYAN}{'UPDATE ENTRY'.center(40, '=')}{Style.RESET_ALL}")
+    print(f"\n{Fore.CYAN}{'UPDATE ENTRY'.center(30, '=')}{Style.RESET_ALL}")
     # call display_passwords() and display stored passwords, if any
     display_passwords(False)
     # ask user to select an entry by website_name
     while True:
         try:
+            print("".center(40, "="))
             website_name = input("Choose entry by website name: ")
             user_selection = password_collection.find_one(
                 {"website_name": website_name}
@@ -157,7 +159,9 @@ def update_entry():
     while True:
         try:
             update_choice = int(
-                input("1: Update website\n2: Update password\nEnter choice: ")
+                input(
+                    f"{Fore.GREEN}1: Update website{Style.RESET_ALL}    {Fore.GREEN}2: Update password{Style.RESET_ALL}\nEnter choice: "
+                )
             )
             if update_choice not in {1, 2}:
                 print(f"{Fore.RED}ERROR: Please enter 1 or 2 {Style.RESET_ALL}")
@@ -193,7 +197,7 @@ def update_entry():
             try:
                 password_choice = int(
                     input(
-                        "1: Enter Personal Password\n2: Generate Secure Password\nEnter choice: "
+                        f"{Fore.YELLOW}1: Enter Personal Password{Style.RESET_ALL}\n{Fore.GREEN}2: Generate Secure Password{Style.RESET_ALL}\nEnter choice: "
                     )
                 )
                 if password_choice not in {1, 2}:
@@ -227,6 +231,7 @@ def update_entry():
 
         else:
             new_password = generate_password()
+            print(f"Generated Password: {Fore.GREEN}{new_password}{Style.RESET_ALL}")
             password_collection.update_one(
                 {"website_name": website_name}, {"$set": {"password": new_password}}
             )
